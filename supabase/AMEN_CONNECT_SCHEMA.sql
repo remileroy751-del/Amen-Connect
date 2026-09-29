@@ -2152,7 +2152,7 @@ exception
 end;
 $$;
 
-grant execute on function public.admin_update_teacher_assignment(uuid, uuid, uuid, boolean) to authenticated;
+grant execute on function public.admin_update_teacher_assignment(uuid, uuid, uuid, uuid, boolean) to authenticated;
 
 -- ============================================================
 -- 9. NOTE DE COMPATIBILITÉ

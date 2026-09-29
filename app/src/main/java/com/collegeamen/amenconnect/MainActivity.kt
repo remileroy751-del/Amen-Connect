@@ -47,17 +47,17 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val Kaki = Color(0xFF7A7F4B)
-private val Beurre = Color(0xFFF3E8C3)
+private val Kaki = Color(0xFF5D2803)
+private val Beurre = Color(0xFFFFF3D6)
 private val Black = Color(0xFF111111)
 private val White = Color(0xFFFFFFFF)
 
 // Alias internes conservés pour préserver l'architecture de l'interface.
 private val DarkGreen = Kaki
-private val YellowGreen = Beurre
-private val SoftGreen = Beurre
-private val Orange = Kaki
-private val Red = Kaki
+private val YellowGreen = Color(0xFFE9B963)
+private val SoftGreen = Color(0xFFFFF3D6)
+private val Orange = Color(0xFFE9B963)
+private val Red = Color(0xFF8B2D1C)
 
 data class Child(val id: String, val name: String, val className: String)
 data class Teacher(val id: String, val name: String, val subject: String, val homeroom: Boolean)
@@ -423,11 +423,11 @@ private fun LoginScreen(code: String, onCode: (String) -> Unit, error: String, l
             contentScale = ContentScale.Fit
         )
         Spacer(Modifier.height(8.dp))
-        Text("COLLEGE AMEN", color = Kaki, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-        Text("COLLEGE AMEN", color = DarkGreen, fontSize = 19.sp, fontWeight = FontWeight.Black)
+        Text("COLLÈGE AMEN", color = DarkGreen, fontSize = 19.sp, fontWeight = FontWeight.Black)
         Text("AMEN CONNECT", color = DarkGreen, fontSize = 29.sp, fontWeight = FontWeight.Black)
-        Text("Lomé-Avépozo", color = Kaki, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-        Text("Tél: +228 90 02 80 15 & 22 71 06 02", color = Kaki, fontSize = 12.sp)
+        Text("Espace Parents & Enseignants", color = Kaki, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
+        Text("Lomé-Avépozo", color = Kaki, fontSize = 12.sp)
+        Text("Tél: +228 90 02 80 15 & 22 71 06 02", color = Kaki, fontSize = 11.sp)
         Spacer(Modifier.height(24.dp))
         OutlinedTextField(
             value = code,
@@ -465,14 +465,32 @@ private fun LoginScreen(code: String, onCode: (String) -> Unit, error: String, l
 
 @Composable
 private fun Header(title: String, subtitle: String, logout: () -> Unit) {
-    Row(Modifier.fillMaxWidth().padding(bottom = 18.dp), verticalAlignment = Alignment.CenterVertically) {
-        Image(painterResource(R.drawable.amen_logo), contentDescription = "COLLEGE AMEN", modifier = Modifier.size(54.dp), contentScale = ContentScale.Fit)
-        Spacer(Modifier.width(10.dp))
-        Column(Modifier.weight(1f)) {
-            Text(title, color = DarkGreen, fontWeight = FontWeight.Black, fontSize = 20.sp)
-            if (subtitle.isNotBlank()) Text(subtitle, color = Kaki, fontSize = 12.sp)
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(bottom = 18.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Beurre),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painterResource(R.drawable.amen_logo),
+                contentDescription = "Logo Collège Amen",
+                modifier = Modifier.size(62.dp),
+                contentScale = ContentScale.Fit
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text("COLLÈGE AMEN", color = DarkGreen, fontWeight = FontWeight.Black, fontSize = 12.sp)
+                Text(title, color = DarkGreen, fontWeight = FontWeight.Black, fontSize = 20.sp)
+                Text(if (subtitle.isNotBlank()) subtitle else "AMEN CONNECT • Espace sécurisé", color = Kaki, fontSize = 10.sp)
+            }
+            IconButton(onClick = logout) {
+                Icon(Icons.Default.Logout, "Déconnexion", tint = DarkGreen)
+            }
         }
-        IconButton(onClick = logout) { Icon(Icons.Default.Logout, "Déconnexion") }
     }
 }
 

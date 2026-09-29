@@ -30,3 +30,9 @@ Pour conserver l'architecture existante, la création d'une classe depuis l'admi
 
 ### Sécurité de l'initialisation Direction
 Le premier compte Auth qui exécute l'initialisation devient administrateur. Une fois un administrateur présent, un autre compte Auth ne peut pas s'auto-ajouter comme administrateur via cette fonction.
+
+## Mise à jour identité visuelle — Collège Amen
+- Le logo officiel fourni de **Collège Amen** est utilisé dans les espaces Parents et Enseignants ainsi que dans l'interface Super Admin.
+- La palette UI est alignée sur le logo : brun institutionnel, or doux, crème et noir.
+- Le logo traité est également défini comme icône de l'application **AMEN CONNECT**.
+- L'interface d'administration conserve toutes les fonctions existantes tout en bénéficiant d'une présentation responsive et d'une hiérarchie visuelle renforcée.

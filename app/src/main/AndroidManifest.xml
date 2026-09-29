@@ -7,8 +7,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <application
-        android:icon="@drawable/amen_logo"
-        android:roundIcon="@drawable/amen_logo"
+        android:icon="@drawable/amen_launcher"
+        android:roundIcon="@drawable/amen_launcher"
         android:allowBackup="true"
         android:label="AMEN CONNECT"
         android:supportsRtl="true"
