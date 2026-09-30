@@ -70,7 +70,7 @@ data class NoteRow(
 )
 data class Announcement(
     val id: String, val title: String, val body: String,
-    val importance: String, val createdAt: String, val acknowledged: Boolean
+    val importance: String, val createdAt: String, val isRead: Boolean
 )
 data class ChatMessage(val id: String, val senderRole: String, val body: String, val createdAt: String)
 data class TeacherClass(
@@ -139,15 +139,15 @@ class AmenApi {
     }
 
     fun announcements(code: String, childId: String): List<Announcement> = arr(post("student_announcements", JSONObject().put("p_code", code).put("p_student_id", childId))).let { a ->
-        (0 until a.length()).map { i -> a.getJSONObject(i).let { Announcement(it.getString("announcement_id"), it.optString("title"), it.optString("body"), it.optString("importance"), dateLabel(it.optString("created_at")), it.optBoolean("acknowledged")) } }
+        (0 until a.length()).map { i -> a.getJSONObject(i).let { Announcement(it.getString("announcement_id"), it.optString("title"), it.optString("body"), it.optString("importance"), dateLabel(it.optString("created_at")), it.optBoolean("is_read")) } }
+    }
+
+    fun markAnnouncementsRead(code: String, childId: String) {
+        post("mark_announcements_read", JSONObject().put("p_code", code).put("p_student_id", childId))
     }
 
     fun teacherAnnouncements(code: String): List<Announcement> = arr(post("teacher_announcements", JSONObject().put("p_code", code))).let { a ->
         (0 until a.length()).map { i -> a.getJSONObject(i).let { Announcement(it.getString("announcement_id"), it.optString("title"), it.optString("body"), it.optString("importance"), dateLabel(it.optString("created_at")), false) } }
-    }
-
-    fun acknowledge(code: String, id: String, childId: String) {
-        post("acknowledge_announcement", JSONObject().put("p_code", code).put("p_announcement_id", id).put("p_student_id", childId))
     }
 
     fun messages(code: String, childId: String, teacherId: String): List<ChatMessage> = arr(post("conversation_messages", JSONObject().put("p_code", code).put("p_student_id", childId).put("p_teacher_id", teacherId))).let { a ->
@@ -525,12 +525,40 @@ private fun ParentHome(api: AmenApi, code: String, parentName: String, onExit: (
 @Composable
 private fun ParentChildScreen(api: AmenApi, code: String, child: Child, back: () -> Unit) {
     var page by remember { mutableStateOf("menu") }
+    var unreadDirection by remember { mutableIntStateOf(0) }
+    val scope = rememberCoroutineScope()
     BackHandler { if (page == "menu") back() else page = "menu" }
+    LaunchedEffect(child.id) {
+        runCatching {
+            val list = withContext(Dispatchers.IO) { api.announcements(code, child.id) }
+            unreadDirection = list.count { !it.isRead }
+        }
+    }
+    PollWhileVisible(15_000L) {
+        if (page == "menu") {
+            runCatching {
+                val list = withContext(Dispatchers.IO) { api.announcements(code, child.id) }
+                unreadDirection = list.count { !it.isRead }
+            }
+        }
+    }
     Column(Modifier.fillMaxSize().padding(20.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) { IconButton(onClick = { if (page == "menu") back() else page = "menu" }) { Icon(Icons.Default.ArrowBack, "Retour") }; Column { Text(child.name, fontSize = 22.sp, fontWeight = FontWeight.ExtraBold, color = DarkGreen); Text(child.className, color = Kaki) } }
         Spacer(Modifier.height(20.dp))
         when (page) {
-            "menu" -> { ParentAction("Voir les notes", Icons.Default.School) { page = "notes" }; ParentAction("Message de la Direction", Icons.Default.Campaign) { page = "news" }; ParentAction("Voir les enseignants de mon enfant", Icons.Default.Groups) { page = "chat" } }
+            "menu" -> {
+                ParentAction("Voir les notes", Icons.Default.School) { page = "notes" }
+                ParentAction(
+                    "Message de la Direction",
+                    Icons.Default.Campaign,
+                    if (unreadDirection > 0) "${unreadDirection} nouveau${if (unreadDirection > 1) "x" else ""} message${if (unreadDirection > 1) "s" else ""}" else null
+                ) {
+                    unreadDirection = 0
+                    scope.launch { runCatching { withContext(Dispatchers.IO) { api.markAnnouncementsRead(code, child.id) } } }
+                    page = "news"
+                }
+                ParentAction("Voir les enseignants de mon enfant", Icons.Default.Groups) { page = "chat" }
+            }
             "notes" -> NotesScreen(api, code, child) { page = "menu" }
             "news" -> NewsScreen(api, code, child) { page = "menu" }
             "chat" -> ChatScreen(api, code, child) { page = "menu" }
@@ -539,8 +567,21 @@ private fun ParentChildScreen(api: AmenApi, code: String, child: Child, back: ()
 }
 
 @Composable
-private fun ParentAction(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
-    Card(Modifier.fillMaxWidth().padding(vertical = 7.dp).clickable(onClick = onClick), shape = RoundedCornerShape(18.dp)) { Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) { Icon(icon, null, tint = DarkGreen, modifier = Modifier.size(30.dp)); Spacer(Modifier.width(18.dp)); Text(label, fontSize = 17.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f)); Icon(Icons.Default.ChevronRight, null) } }
+private fun ParentAction(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, badge: String? = null, onClick: () -> Unit) {
+    Card(Modifier.fillMaxWidth().padding(vertical = 7.dp).clickable(onClick = onClick), shape = RoundedCornerShape(18.dp)) {
+        Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, null, tint = DarkGreen, modifier = Modifier.size(30.dp))
+            Spacer(Modifier.width(18.dp))
+            Column(Modifier.weight(1f)) {
+                Text(label, fontSize = 17.sp, fontWeight = FontWeight.Bold)
+                if (!badge.isNullOrBlank()) {
+                    Spacer(Modifier.height(3.dp))
+                    Text(badge, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Red)
+                }
+            }
+            Icon(Icons.Default.ChevronRight, null)
+        }
+    }
 }
 
 @Composable
@@ -587,7 +628,10 @@ private fun NewsScreen(api: AmenApi, code: String, child: Child, back: () -> Uni
             loading = false
         }
     }
-    LaunchedEffect(child.id) { refresh() }
+    LaunchedEffect(child.id) {
+        runCatching { withContext(Dispatchers.IO) { api.markAnnouncementsRead(code, child.id) } }
+        refresh()
+    }
     PollWhileVisible(20_000L) {
         runCatching { withContext(Dispatchers.IO) { api.announcements(code, child.id) } }
             .onSuccess { items = it; error = "" }
@@ -618,18 +662,17 @@ private fun NewsScreen(api: AmenApi, code: String, child: Child, back: () -> Uni
                         Spacer(Modifier.height(6.dp))
                         Text(n.body)
                         Spacer(Modifier.height(10.dp))
-                        Button(
-                            onClick = {
-                                if (!n.acknowledged) scope.launch {
-                                    runCatching { withContext(Dispatchers.IO) { api.acknowledge(code, n.id, child.id) } }
-                                        .onSuccess { refresh() }
-                                        .onFailure { error = it.message ?: "Accusé de réception impossible." }
-                                }
-                            },
-                            enabled = !n.acknowledged,
-                            colors = ButtonDefaults.buttonColors(containerColor = c)
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = if (n.isRead) Beurre else c.copy(alpha = 0.18f)
                         ) {
-                            Text(if (n.acknowledged) "Bien reçu ✓" else "Bien reçu", color = if (n.importance == "pas_urgent" || n.importance == "vert" || n.importance == "orange") Black else White)
+                            Text(
+                                if (n.isRead) "Message consulté" else "Nouveau message",
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (n.isRead) Kaki else c
+                            )
                         }
                     }
                 }

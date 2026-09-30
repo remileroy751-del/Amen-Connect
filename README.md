@@ -7,6 +7,7 @@ Application mobile de gestion scolaire basée sur Kotlin / Jetpack Compose, avec
 - `admin/index.html` : interface Super Admin Direction.
 - `index.html` : copie de l'interface web, utile pour GitHub Pages à la racine.
 - `supabase/AMEN_CONNECT_SCHEMA.sql` : script SQL complet à exécuter dans Supabase.
+- `supabase/MIGRATION_V10_PARENT_ENFANTS_MESSAGES.sql` : migration V10 à exécuter sur une base AMEN CONNECT déjà installée.
 - `.github/workflows/android.yml` : compilation automatique de l'APK Debug.
 
 ## Supabase
@@ -20,7 +21,7 @@ Dans Supabase > SQL Editor, créer une nouvelle requête, copier tout le contenu
 Ensuite, dans Supabase > Authentication > Users, créer le compte e-mail + mot de passe de la Direction. Depuis l'interface Super Admin, utiliser l'initialisation du compte Direction avec ce compte.
 
 ## Message de la Direction
-Les communiqués sont enregistrés dans `announcements`. Les RPC `student_announcements` et `acknowledge_announcement` assurent la lecture et l'accusé de réception côté parent. Le schéma inclut `student_id` dans `announcement_receipts` afin que l'accusé soit correctement lié à l'enfant sélectionné.
+Les messages de la Direction sont enregistrés dans `announcements`. Le parent consulte les messages liés à l'enfant sélectionné via `student_announcements`. Le suivi est maintenant fait avec `announcement_reads` : le bouton affiche « 1 nouveau message », « 2 nouveaux messages », etc., puis le compteur revient à zéro lorsque le parent ouvre « Message de la Direction ». L'ancien système « Bien reçu / accusé de réception » a été supprimé.
 
 ## Compilation GitHub
 Le workflow installe Java 17, Gradle 8.9 et Android SDK 35, puis exécute `gradle assembleDebug`.

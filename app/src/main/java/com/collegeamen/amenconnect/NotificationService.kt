@@ -128,7 +128,7 @@ class AmenNotificationService : Service() {
         )
         return NotificationCompat.Builder(this, CHANNEL_BACKGROUND)
             .setSmallIcon(R.drawable.ic_stat_amen)
-            .setColor(0xFF0E4B3A.toInt())
+            .setColor(0xFF5D2803.toInt())
             .setContentTitle("AMEN CONNECT")
             .setContentText("")
             .setShowWhen(false)
@@ -153,7 +153,7 @@ class AmenNotificationService : Service() {
         val title = item.title.ifBlank { "Nouveau message — AMEN CONNECT" }
         val notification = NotificationCompat.Builder(this, CHANNEL_MESSAGES)
             .setSmallIcon(R.drawable.ic_stat_amen)
-            .setColor(0xFF0E4B3A.toInt())
+            .setColor(0xFF5D2803.toInt())
             .setContentTitle(title)
             .setContentText(item.body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(item.body))
@@ -194,7 +194,7 @@ fun createNotificationChannels(context: Context) {
             enableVibration(true)
             vibrationPattern = longArrayOf(0, 300, 200, 300)
             enableLights(true)
-            lightColor = 0xFFC9D84A.toInt()
+            lightColor = 0xFFE9B963.toInt()
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             setShowBadge(true)
             setSound(
