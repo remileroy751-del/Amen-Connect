@@ -37,3 +37,10 @@ Le premier compte Auth qui exécute l'initialisation devient administrateur. Une
 - La palette UI est alignée sur le logo : brun institutionnel, or doux, crème et noir.
 - Le logo traité est également défini comme icône de l'application **AMEN CONNECT**.
 - L'interface d'administration conserve toutes les fonctions existantes tout en bénéficiant d'une présentation responsive et d'une hiérarchie visuelle renforcée.
+
+## Mise à jour identité — V12
+- Interface admin : marque affichée « Collège AMEN » avec « AMEN-CONNECT » en sous-titre.
+- Suppression de l’ancienne mention institutionnelle de l’interface.
+- Liste des élèves par classe : uniquement les noms et prénoms, par ordre alphabétique.
+- Accueil Android : adresse « Lomé Kangnikopé » et suppression des numéros de téléphone.
+- Accueil Android : « Collège Amen » puis « Amen-Connect ».

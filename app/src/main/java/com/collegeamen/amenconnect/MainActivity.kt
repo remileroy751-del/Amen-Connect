@@ -423,11 +423,10 @@ private fun LoginScreen(code: String, onCode: (String) -> Unit, error: String, l
             contentScale = ContentScale.Fit
         )
         Spacer(Modifier.height(8.dp))
-        Text("COLLÈGE AMEN", color = DarkGreen, fontSize = 19.sp, fontWeight = FontWeight.Black)
-        Text("AMEN CONNECT", color = DarkGreen, fontSize = 29.sp, fontWeight = FontWeight.Black)
+        Text("Collège AMEN", color = DarkGreen, fontSize = 29.sp, fontWeight = FontWeight.Black)
+        Text("Amen-Connect", color = DarkGreen, fontSize = 19.sp, fontWeight = FontWeight.Black)
         Text("Espace Parents & Enseignants", color = Kaki, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-        Text("Lomé-Avépozo", color = Kaki, fontSize = 12.sp)
-        Text("Tél: +228 90 02 80 15 & 22 71 06 02", color = Kaki, fontSize = 11.sp)
+        Text("Lomé Kangnikopé", color = Kaki, fontSize = 12.sp)
         Spacer(Modifier.height(24.dp))
         OutlinedTextField(
             value = code,

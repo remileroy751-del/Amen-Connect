@@ -32,8 +32,8 @@ android {
         applicationId = "com.collegeamen.amenconnect"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
 
         val supabaseUrl = (project.findProperty("SUPABASE_URL") as String?) ?: "https://cbiusjqmuknzsmffjntv.supabase.co"
         val supabaseKey = (project.findProperty("SUPABASE_ANON_KEY") as String?) ?: "sb_publishable_h0lKJU9e9Bp0GNYirNB0qw_LDIoSKcU"
